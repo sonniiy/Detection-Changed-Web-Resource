@@ -5,6 +5,7 @@ import urllib.request
 import hashlib
 import json
 import uuid
+import requests
 
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
@@ -28,14 +29,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     # Search URL in table
     filterContent = "URL eq '{}'".format(urlHeader)
     initialHashRows = list(table_service.query_entities('Hashes', filter = filterContent))
-    
+
+    # Test if URL is still active
+    requ = requests.get(url=urlHeader)
+    statusCode = requ.status_code
+
+    if str(statusCode) == '404':
+        print('Webside does not exist anymore nicht mehr!!')
+        return func.HttpResponse("Website does not exist anymore", status_code=410)
+
     # Sort Hashes, which fit to URL
     if len(initialHashRows) != 0:
         sortedHashes = sorted(initialHashRows, key = lambda i: i['Timestamp'], reverse = True) 
         print(sortedHashes)
         initialHashLine = sortedHashes[0]
         initialHash = initialHashLine['Hash']
-    
+
     
     if urlHeader and account_name and account_key:
 
