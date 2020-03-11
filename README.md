@@ -15,16 +15,20 @@ Post-Request
 Please pass the **account_name** and **account_key** in a Json file in the body. 
 
 ## Responses
-**Code 202**, First time URL has been tested
+**Code 202**: First time URL has been tested
 
-**Code 201**, URL has changed
+**Code 201**: URL has changed
 
-**Code 200**, URL has not changed
+**Code 200**: URL has not changed
+
+**Code 404**: Website does not exist anymore
+
+**Code 400**: Required parameters url, account_name and account_key were not passed correctly
 
 ## Structure of Table Storage
 This code uses a table storage as storage type. 
 
-The structure of the storage should look like this: PartitionKey, Rowkey, Timestamp, Hash, URL
+The structure of the storage should look like this: PARTITIONKEY, ROWKEY, TIMESTAMP, HASH, URL
 
 
 
