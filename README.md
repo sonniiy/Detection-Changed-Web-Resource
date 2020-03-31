@@ -12,7 +12,7 @@ Post-Request
 **url**: URL, which should be monitored by the Azure Function
 
 ## Body
-Please pass the **account_name** and **account_key** in a Json file in the body. 
+Please past the **account_name** and **account_key** in a Json file in the body. 
 
 ## Responses
 **Code 202**: First time URL has been tested
