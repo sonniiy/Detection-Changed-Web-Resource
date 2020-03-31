@@ -1,4 +1,4 @@
-# Detection Changed Website
+# Detection Changed Web Resource
 
 This code provides a REST API which can be called to detect if the content of a website has changed. 
 One application scenario is to execute the code using an Azure Function. The Azure Function can then be integrated into a Logic App. The Logic App can be called regularly and can send an e-mail when changes are made to the website.  
