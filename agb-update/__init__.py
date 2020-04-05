@@ -10,7 +10,6 @@ import requests
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    comparison = False
     initialHash = None
 
     # Get url from header
@@ -62,20 +61,17 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         if initialHash is None:
             newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
             table_service.insert_entity('Hashes', newHash)
-            comparison = True
             return func.HttpResponse("First time URL has been tested", status_code=202)
         # Hash has changed 
         elif initialHash != htmlHashString:
             # Add Hash in Table Storage
             newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
             table_service.insert_entity('Hashes', newHash)
-            comparison = True
             return func.HttpResponse("URL has changed", status_code=201)
         # Hash has not changed
         else:
             newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
             table_service.insert_entity('Hashes', newHash)
-            comparison = False
             return func.HttpResponse("URL has not changed", status_code=200)
     
     else:
