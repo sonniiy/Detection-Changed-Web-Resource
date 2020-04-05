@@ -21,7 +21,7 @@ Please past the **account_name** and **account_key** in a Json file in the body.
 
 **Code 200**: URL has not changed
 
-**Code 404**: Website does not exist anymore
+**Code 204**: Website does not exist anymore
 
 **Code 400**: Required parameters url, account_name and account_key were not passed correctly
 
