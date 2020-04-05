@@ -35,7 +35,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     if str(statusCode) == '404':
         print('Webside does not exist anymore nicht mehr!!')
-        return func.HttpResponse("Website does not exist anymore", status_code=410)
+        return func.HttpResponse("Website does not exist anymore", status_code=204)
 
     # Sort Hashes, which fit to URL
     if len(initialHashRows) != 0:
