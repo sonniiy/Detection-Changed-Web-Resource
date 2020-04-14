@@ -33,17 +33,15 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     requ = requests.get(url=urlHeader)
     statusCode = requ.status_code
 
+    # For status code 204, it is not possible to write something into the response body
     if str(statusCode) == '404':
-        print('Webside does not exist anymore nicht mehr!!')
-        return func.HttpResponse("Website does not exist anymore", status_code=204)
+        return func.HttpResponse(status_code=204)
 
     # Sort Hashes, which fit to URL
     if len(initialHashRows) != 0:
         sortedHashes = sorted(initialHashRows, key = lambda i: i['Timestamp'], reverse = True) 
-        print(sortedHashes)
         initialHashLine = sortedHashes[0]
         initialHash = initialHashLine['Hash']
-
     
     if urlHeader and account_name and account_key:
 
@@ -56,22 +54,21 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         htmlHash = hashlib.md5(htmlInBytes)
         htmlHashString=htmlHash.hexdigest()
 
+        # Save Hash in Table Storage
+        newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
+        table_service.insert_entity('Hashes', newHash)
+
         # Compare the newly calculated Hash with inital Hash 
         # First time hash is applied on this url  
         if initialHash is None:
-            newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
-            table_service.insert_entity('Hashes', newHash)
             return func.HttpResponse("First time URL has been tested", status_code=202)
+        
         # Hash has changed 
         elif initialHash != htmlHashString:
-            # Add Hash in Table Storage
-            newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
-            table_service.insert_entity('Hashes', newHash)
             return func.HttpResponse("URL has changed", status_code=201)
+
         # Hash has not changed
         else:
-            newHash = {'PartitionKey': 'HashAGB', 'RowKey': str(uuid.uuid1()), 'Hash' : htmlHashString, 'URL': urlHeader}
-            table_service.insert_entity('Hashes', newHash)
             return func.HttpResponse("URL has not changed", status_code=200)
     
     else:
