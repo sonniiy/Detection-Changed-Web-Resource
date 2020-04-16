@@ -23,6 +23,8 @@ Please past the **account_name** and **account_key** in a Json file in the body.
 
 **Code 204**: Website does not exist anymore
 
+**Code 209**: RequestException was thrown 
+
 **Code 400**: Required parameters url, account_name and account_key were not passed correctly
 
 ## Structure of Table Storage
