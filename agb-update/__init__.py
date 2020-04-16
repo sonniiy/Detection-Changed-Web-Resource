@@ -1,7 +1,7 @@
 import logging
 import azure.functions as func
 from azure.storage.table import TableService
-import urllib.request
+import urllib
 import hashlib
 import json
 import uuid
@@ -29,11 +29,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     filterContent = "URL eq '{}'".format(urlHeader)
     initialHashRows = list(table_service.query_entities('Hashes', filter = filterContent))
 
+    # Catch Request Exceptions
+    try:
+        requ = requests.get(url=urlHeader)
+    except requests.exceptions.RequestException:
+        return func.HttpResponse("Problem with URL or connection", status_code=209)
+
     # Test if URL is still active
-    requ = requests.get(url=urlHeader)
     statusCode = requ.status_code
 
-    # For status code 204, it is not possible to write something into the response body
+    # For status code 204, it is not possible to write something into the response body, therefor only the status code is returned
     if str(statusCode) == '404':
         return func.HttpResponse(status_code=204)
 
@@ -44,9 +49,13 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         initialHash = initialHashLine['Hash']
     
     if urlHeader and account_name and account_key:
-
+        
         # Get Bytes behind URL
-        fb = urllib.request.urlopen(urlHeader)
+        try:
+           fb = urllib.request.urlopen(urlHeader)
+        except requests.exceptions.RequestException:
+           return func.HttpResponse("Problem with URL or connection", status_code=209)
+        
         htmlInBytes = fb.read()
         fb.close()
 
